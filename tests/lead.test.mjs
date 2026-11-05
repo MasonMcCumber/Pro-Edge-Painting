@@ -1,6 +1,6 @@
 // Run: node tests/lead.test.mjs
 import assert from 'node:assert/strict';
-import { normalizePhone, buildContact, cleanOffer, tagsFor, noteFor } from '../api/lead.js';
+import { normalizePhone, buildContact, cleanOffer, tagsFor, noteFor, webhookBody } from '../api/lead.js';
 
 assert.equal(normalizePhone('(979) 555-0123'), '+19795550123');
 assert.equal(normalizePhone('1-979-555-0123'), '+19795550123');
@@ -41,5 +41,16 @@ assert.equal(cleanOffer('a b<script>'), 'unknown');
 assert.deepEqual(tagsFor('qualify', false), ['pep-test-funnel', 'offer-qualify']);
 assert.deepEqual(tagsFor('qualify', true), ['pep-test-funnel', 'offer-qualify', 'funnel-completed']);
 assert.match(noteFor('qualify', answers, tracking), /Service needed: Exterior painting\nStart timeline: -\nHomeowner: Yes\nutm_source: fb/);
+
+// Webhook payload uses the original page's field names so the GHL workflow mappings still apply.
+const hook = webhookBody(contact, answers, offer, tracking, 'https://x.test/qualify');
+assert.equal(hook.get('first_name'), 'Jane');
+assert.equal(hook.get('phone'), '+19795550123');
+assert.equal(hook.get('postal_code'), '77840');
+assert.equal(hook.get('services'), 'Exterior painting');
+assert.equal(hook.get('timeline'), '');
+assert.equal(hook.get('lead_source'), 'Website quote funnel');
+assert.equal(hook.get('lead_offer'), 'qualify');
+assert.equal(hook.get('utm_source'), 'fb');
 
 console.log('lead tests passed');

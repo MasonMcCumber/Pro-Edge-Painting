@@ -1,7 +1,7 @@
 // Vercel serverless function: instant lead capture into Professional Edge Painting's GoHighLevel.
 // The page calls this as soon as name/phone/ZIP are in, then after every answer, so partial leads are kept.
 // Contacts are matched by phone, so each call updates the same contact. Nobody is disqualified.
-// Needs Vercel env vars:
+// Finished leads go to the GHL inbound webhook (no setup needed). Optional Vercel env vars for partial leads + tags:
 //   GHL_PRIVATE_TOKEN  - GHL Private Integration token (Contacts read/write) for the PEP sub-account
 //   GHL_LOCATION_ID    - PEP sub-account (location) ID
 
@@ -107,17 +107,36 @@ export function noteFor(offer, answers, tracking) {
   ].join('\n');
 }
 
+// The same GHL inbound webhook the original /quote-page posts to. Its workflow creates the
+// opportunity and sends the notifications, so finished leads from this page show up exactly like the old ones.
+export const WEBHOOK_URL =
+  'https://services.leadconnectorhq.com/hooks/tiXIbhmn25GoHJDpH89w/webhook-trigger/b75894bf-3b22-4dc7-b719-17917b36c23d';
+
+// Field names match the original page's payload, so the workflow's existing mappings keep working.
+export function webhookBody(contact, answers, offer, tracking, pageUrl) {
+  const d = {
+    first_name: contact.firstName || '',
+    last_name: contact.lastName || '',
+    phone: contact.phone,
+    email: contact.email || '',
+    postal_code: contact.postalCode || '',
+    services: answers.service_needed || '',
+    timeline: answers.start_timeline || '',
+    homeowner: answers.homeowner || '',
+    sms_consent: 'yes', // the contact step shows call/text consent wording
+    lead_source: 'Website quote funnel',
+    lead_offer: offer,
+    page_url: clean(pageUrl, 500),
+    submitted_at: new Date().toISOString(),
+  };
+  for (const k of TRACKING_KEYS) d[k] = tracking[k] || '';
+  return new URLSearchParams(d);
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const token = process.env.GHL_PRIVATE_TOKEN;
-  const locationId = process.env.GHL_LOCATION_ID;
-  if (!token || !locationId) {
-    console.error('Missing GHL_PRIVATE_TOKEN or GHL_LOCATION_ID');
-    return res.status(500).json({ error: 'Lead capture is not configured yet' });
   }
 
   let body = req.body || {};
@@ -132,50 +151,63 @@ export default async function handler(req, res) {
   // Honeypot: bots fill the hidden field. Pretend it worked, save nothing.
   if (clean(body.company_fax)) return res.status(200).json({ ok: true });
 
+  // The token is optional: with it, partial leads are saved and tagged too. Without it, only finished leads arrive (via the webhook).
+  const token = process.env.GHL_PRIVATE_TOKEN;
+  const locationId = process.env.GHL_LOCATION_ID || '';
+
   const built = buildContact(body, locationId);
   if (built.error) return res.status(400).json({ error: built.error });
   const { contact, answers, offer, tracking } = built;
   const completed = body.stage === 'complete';
 
+  try {
+    if (completed) {
+      const hook = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: webhookBody(contact, answers, offer, tracking, body.page_url),
+      });
+      if (!hook.ok) {
+        console.error('GHL webhook failed', hook.status, await hook.text());
+        return res.status(502).json({ error: 'Could not save lead' });
+      }
+    }
+
+    if (token && locationId) await saveWithApi(token, contact, answers, offer, tracking, completed);
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('GHL request error', err);
+    return res.status(502).json({ error: 'Could not save lead' });
+  }
+}
+
+// Optional extra: upsert by phone, tag by offer, and add a summary note. Errors are logged, never shown to the visitor.
+async function saveWithApi(token, contact, answers, offer, tracking, completed) {
   const headers = {
     Authorization: `Bearer ${token}`,
     Version: GHL_VERSION,
     'Content-Type': 'application/json',
     Accept: 'application/json',
   };
+  const upsert = await fetch(`${GHL_API}/contacts/upsert`, { method: 'POST', headers, body: JSON.stringify(contact) });
+  const upsertData = await upsert.json().catch(() => ({}));
+  if (!upsert.ok) return console.error('GHL upsert failed', upsert.status, upsertData);
+  const contactId = upsertData && upsertData.contact && upsertData.contact.id;
+  if (!contactId) return;
 
-  try {
-    const upsert = await fetch(`${GHL_API}/contacts/upsert`, { method: 'POST', headers, body: JSON.stringify(contact) });
-    const upsertData = await upsert.json().catch(() => ({}));
-    if (!upsert.ok) {
-      console.error('GHL upsert failed', upsert.status, upsertData);
-      return res.status(502).json({ error: 'Could not save lead' });
-    }
-    const contactId = upsertData && upsertData.contact && upsertData.contact.id;
+  const tagRes = await fetch(`${GHL_API}/contacts/${contactId}/tags`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ tags: tagsFor(offer, completed) }),
+  });
+  if (!tagRes.ok) console.error('GHL tags failed', tagRes.status, await tagRes.text());
 
-    if (contactId) {
-      // Adds tags without removing existing ones.
-      const tagRes = await fetch(`${GHL_API}/contacts/${contactId}/tags`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ tags: tagsFor(offer, completed) }),
-      });
-      if (!tagRes.ok) console.error('GHL tags failed', tagRes.status, await tagRes.text());
-
-      // One summary note when they finish (not on every step, to avoid duplicates).
-      if (completed) {
-        const noteRes = await fetch(`${GHL_API}/contacts/${contactId}/notes`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({ body: noteFor(offer, answers, tracking) }),
-        });
-        if (!noteRes.ok) console.error('GHL note failed', noteRes.status, await noteRes.text());
-      }
-    }
-
-    return res.status(200).json({ ok: true });
-  } catch (err) {
-    console.error('GHL request error', err);
-    return res.status(502).json({ error: 'Could not save lead' });
+  if (completed) {
+    const noteRes = await fetch(`${GHL_API}/contacts/${contactId}/notes`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ body: noteFor(offer, answers, tracking) }),
+    });
+    if (!noteRes.ok) console.error('GHL note failed', noteRes.status, await noteRes.text());
   }
 }

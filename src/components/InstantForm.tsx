@@ -61,7 +61,7 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
   const pct = Math.round((step / DONE_STEP) * 100);
 
   function save(stage: 'lead' | 'complete', a: Answers, mail = '') {
-    return captureLead({ ...contact, email: mail, answers: a, stage, offer, tracking: tracking.current, company_fax: honeypot.current?.value ?? '' });
+    return captureLead({ ...contact, email: mail, answers: a, stage, offer, tracking: tracking.current, page_url: window.location.href, company_fax: honeypot.current?.value ?? '' });
   }
 
   function startQuestions() {
@@ -160,9 +160,13 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
                 );
               })}
             </div>
+            <p className="mt-3 text-xs leading-snug text-pep-muted">
+              By entering your info, you agree to receive calls and texts from Professional Edge Painting about your quote. Message and data
+              rates may apply. Reply STOP to opt out. Consent is not a condition of purchase.
+            </p>
             {/* Lets Enter submit without showing a button. */}
             <button type="submit" tabIndex={-1} aria-hidden className="absolute -left-[10000px] h-px w-px overflow-hidden" />
-            <p className={`mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-pep-ok transition-opacity ${allValid && changed ? 'opacity-100' : 'opacity-0'}`} aria-live="polite">
+            <p className={`mt-3 flex items-center justify-center gap-2 text-sm font-semibold text-pep-ok transition-opacity ${allValid && changed ? 'opacity-100' : 'opacity-0'}`} aria-live="polite">
               <Check className="w-4 h-4" /> {allValid && changed ? 'Got it! Loading your questions...' : ''}
             </p>
           </form>

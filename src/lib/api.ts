@@ -15,6 +15,7 @@ export interface LeadPayload {
   stage: 'lead' | 'complete';
   offer: string;
   tracking: Record<string, string>;
+  page_url: string;
   company_fax?: string; // honeypot
 }
 
