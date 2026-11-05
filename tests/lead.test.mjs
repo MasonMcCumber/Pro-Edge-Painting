@@ -59,4 +59,10 @@ assert.equal(hook.get('lead_offer'), 'qualify');
 assert.equal(hook.get('property_type'), 'Homeowner');
 assert.equal(hook.get('utm_source'), 'fb');
 
+// Several services can be picked; unknown items are dropped, the rest kept in order.
+const multi = buildContact({ phone: '9795550123', answers: { service_needed: 'Interior painting, Hacked, Drywall repair' } }, 'L');
+assert.equal(multi.answers.service_needed, 'Interior painting, Drywall repair');
+assert.equal(webhookBody(multi.contact, multi.answers, 'qualify', {}, '').get('in_service_area'), 'no');
+assert.equal(hook.get('in_service_area'), 'yes');
+
 console.log('lead tests passed');

@@ -10,14 +10,19 @@ import { BUSINESS_PHONE, PHONE_PLACEHOLDER } from '@/lib/config';
 // 2. Three questions. Tapping an answer saves it and moves on.
 // 3. Email (moves on once valid, or Skip). Nobody is disqualified.
 
-type Question = { key: keyof Answers; title: string; options: string[] };
+type Question = { key: keyof Answers; title: string; options: string[]; multi?: boolean; hint?: string };
+
+// Brazos Valley ZIPs (same rule as the original quote page); anything else gets a soft note, never a block.
+const inServiceArea = (zip: string) => /^77[6-8]\d\d$/.test(zip);
 
 // Options must match QUESTIONS in api/lead.js exactly (the server drops anything else).
 const QUESTIONS: Question[] = [
   {
     key: 'service_needed',
     title: 'What would you like painted?',
-    options: ['Interior painting', 'Exterior painting', 'Cabinets', 'Fence or staining', 'Something else'],
+    hint: 'Pick all that apply.',
+    multi: true,
+    options: ['Interior painting', 'Exterior painting', 'Cabinets', 'Fence or staining', 'Drywall repair', 'Something else'],
   },
   {
     key: 'start_timeline',
@@ -97,6 +102,12 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email, step]);
 
+  // Multi-choice questions: taps toggle options, then Next saves them as one comma-separated answer.
+  const [picked, setPicked] = useState<string[]>([]);
+  function toggle(option: string) {
+    setPicked((p) => (p.includes(option) ? p.filter((x) => x !== option) : [...p, option]));
+  }
+
   function answer(q: Question, option: string) {
     const next = { ...answers, [q.key]: option };
     setAnswers(next);
@@ -156,6 +167,11 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
                       onBlur={() => setTouched((t) => ({ ...t, [f.key]: true }))}
                     />
                     {bad && <p className="mt-1 text-sm text-pep-err">{f.hint}</p>}
+                    {f.key === 'postal_code' && contact.postal_code.length === 5 && !inServiceArea(contact.postal_code) && (
+                      <p className="mt-1.5 rounded-md bg-[#f1f4f8] px-3 py-2 text-sm">
+                        That ZIP looks outside our usual area. Send it anyway and we'll let you know if we can make it work.
+                      </p>
+                    )}
                   </div>
                 );
               })}
@@ -175,14 +191,43 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
         {q && (
           <>
             <h2 className="text-lg md:text-xl font-bold text-pep-navy text-center">{q.title}</h2>
+            {q.hint && <p className="mt-1 text-center text-sm text-pep-muted">{q.hint}</p>}
             <div className="mt-5 space-y-2.5">
-              {q.options.map((o) => (
-                <button key={o} type="button" onClick={() => answer(q, o)} className={`answer-pep ${answers[q.key] === o ? 'border-pep-gold bg-[#fdf3dc]' : ''}`}>
-                  {o}
-                </button>
-              ))}
+              {q.options.map((o) => {
+                const on = q.multi ? picked.includes(o) : answers[q.key] === o;
+                return (
+                  <button
+                    key={o}
+                    type="button"
+                    aria-pressed={q.multi ? on : undefined}
+                    onClick={() => (q.multi ? toggle(o) : answer(q, o))}
+                    className={`answer-pep flex items-center gap-3 ${on ? 'border-pep-gold bg-[#fdf3dc]' : ''}`}
+                  >
+                    {q.multi && (
+                      <span className={`grid h-5 w-5 flex-none place-items-center rounded border-[1.5px] ${on ? 'border-pep-gold bg-pep-gold' : 'border-[#8d97a8]'}`}>
+                        {on && <Check className="h-3.5 w-3.5 text-pep-navy" strokeWidth={3} />}
+                      </span>
+                    )}
+                    {o}
+                  </button>
+                );
+              })}
             </div>
-            {backBtn}
+            {q.multi ? (
+              <div className="flex items-center justify-between">
+                {backBtn}
+                <button
+                  type="button"
+                  disabled={!picked.length}
+                  onClick={() => answer(q, picked.join(', '))}
+                  className="mt-5 rounded-md bg-pep-gold px-5 py-2.5 text-sm font-extrabold uppercase tracking-wide text-pep-navy disabled:opacity-40"
+                >
+                  Next &rarr;
+                </button>
+              </div>
+            ) : (
+              backBtn
+            )}
           </>
         )}
 
@@ -229,6 +274,12 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
             </div>
             <h2 className="text-xl md:text-2xl font-bold text-pep-navy">Thanks{firstName ? `, ${firstName}` : ''}. You're all set!</h2>
             <p className="mt-2 text-pep-muted">Devan will reach out shortly with your savings and to schedule your walkthrough.</p>
+            {!inServiceArea(contact.postal_code) && (
+              <p className="mt-2 text-pep-muted">Your ZIP is outside our usual area, so Devan will let you know if we can make it work.</p>
+            )}
+            {answers.homeowner === 'No' && (
+              <p className="mt-2 text-pep-muted">Renting? No problem. We'll just need the owner's OK before we start.</p>
+            )}
             <p className="mt-2 text-pep-muted">
               Need us sooner? Call or text <a href={`tel:${BUSINESS_PHONE}`} className="font-bold text-pep-navy whitespace-nowrap">{BUSINESS_PHONE}</a>
             </p>

@@ -66,6 +66,7 @@ export default function OptInPage({ slug, offer }: { slug: string; offer: Offer 
       <main className="w-full rounded-[10px] border-[3px] border-pep-gold bg-pep-panel px-3.5 pb-8 pt-6 text-center text-white md:px-8">
         <h1 className="text-[1.65rem] md:text-[2.4rem] font-extrabold leading-[1.1] tracking-[-0.01em]">{offer.headline}</h1>
         <p className="mx-auto mb-5 mt-2 max-w-xl text-[15px] md:text-base font-semibold text-[#d9e0ec]">{offer.sub}</p>
+        <p className="-mt-3 mb-5 text-sm text-[#d9e0ec]">Big or small, from one room to the whole house.</p>
         <div className="mx-auto max-w-[600px]">
           <InstantForm offer={slug} />
         </div>

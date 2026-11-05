@@ -13,7 +13,8 @@ export const QUESTIONS = {
   service_needed: {
     label: 'Service needed',
     fieldId: 'ou2rHBHJbnvNZbuWlbgS', // Services Requested
-    answers: ['Interior painting', 'Exterior painting', 'Cabinets', 'Fence or staining', 'Something else'],
+    answers: ['Interior painting', 'Exterior painting', 'Cabinets', 'Fence or staining', 'Drywall repair', 'Something else'],
+    multi: true, // several can be picked; sent as "A, B"
   },
   start_timeline: {
     label: 'Start timeline',
@@ -81,9 +82,13 @@ export function buildContact(body, locationId) {
   const answers = {};
   const customFields = [];
   for (const [key, q] of Object.entries(QUESTIONS)) {
-    if (!q.answers.includes(raw[key])) continue; // unknown answers are dropped
-    answers[key] = raw[key];
-    if (q.fieldId) customFields.push({ id: q.fieldId, field_value: key === 'homeowner' ? propertyType(raw[key]) : raw[key] });
+    // Unknown answers are dropped (for multi-choice, each unknown item is dropped).
+    const value = q.multi
+      ? clean(raw[key], 300).split(/\s*,\s*/).filter((v) => q.answers.includes(v)).join(', ')
+      : q.answers.includes(raw[key]) ? raw[key] : '';
+    if (!value) continue;
+    answers[key] = value;
+    if (q.fieldId) customFields.push({ id: q.fieldId, field_value: key === 'homeowner' ? propertyType(value) : value });
   }
   if (OFFER_FIELD_ID) customFields.push({ id: OFFER_FIELD_ID, field_value: offer });
   if (customFields.length) contact.customFields = customFields;
@@ -125,6 +130,7 @@ export function webhookBody(contact, answers, offer, tracking, pageUrl) {
     services: answers.service_needed || '',
     timeline: answers.start_timeline || '',
     property_type: propertyType(answers.homeowner),
+    in_service_area: /^77[6-8]\d\d$/.test(contact.postalCode || '') ? 'yes' : 'no',
     sms_consent: 'yes', // the contact step shows call/text consent wording
     lead_source: 'Website quote funnel',
     lead_offer: offer,
