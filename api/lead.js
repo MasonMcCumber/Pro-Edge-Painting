@@ -171,6 +171,7 @@ export default async function handler(req, res) {
         console.error('GHL webhook failed', hook.status, await hook.text());
         return res.status(502).json({ error: 'Could not save lead' });
       }
+      console.log('Lead sent to GHL webhook', offer, hook.status, (await hook.text()).slice(0, 200));
     }
 
     if (token && locationId) await saveWithApi(token, contact, answers, offer, tracking, completed);
