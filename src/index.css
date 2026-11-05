@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;500;600;700;800&family=Ubuntu:wght@500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* One light look on purpose, matching the PEP site whatever the visitor's theme. */
+:root { color-scheme: light; }
+
+@layer base {
+  body {
+    @apply bg-white text-pep-ink font-body antialiased;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  h1, h2, h3 { text-wrap: balance; }
+}
+
+@layer components {
+  .input-pep {
+    @apply w-full rounded-md border border-pep-line bg-white px-3 py-2.5 text-base text-pep-ink transition-colors;
+  }
+  .input-pep::placeholder { color: #8d97a8; }
+  .input-pep:focus { @apply outline-none border-pep-navy; box-shadow: 0 0 0 3px rgba(28, 43, 69, .12); }
+
+  .answer-pep {
+    @apply w-full min-h-12 rounded-lg border-[1.5px] border-pep-line bg-white px-4 py-3.5 text-left text-base font-semibold text-pep-ink transition-colors;
+  }
+  .answer-pep:hover { @apply border-pep-gold bg-[#fdf3dc]; }
+  .answer-pep:focus-visible { @apply outline-none ring-2 ring-pep-gold; }
+
+  /* Before/after slider: the before image is clipped to the handle position. */
+  .ba { background: repeating-linear-gradient(135deg, #eef1f6 0 12px, #e4e9f0 12px 24px); }
+  .ba-before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .ba::after { content: ""; position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 6px rgba(0,0,0,.35); pointer-events: none; }
+  .ba-handle { position: absolute; top: 50%; left: var(--pos); width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 2px 8px rgba(0,0,0,.3); z-index: 2; pointer-events: none; }
+  .ba-tag { @apply absolute top-2.5 z-[2] rounded-full px-2.5 py-1 text-[10.5px] font-extrabold uppercase tracking-[.1em] text-white pointer-events-none; }
+  .ba:focus-within { outline: 3px solid rgba(227, 167, 43, .7); outline-offset: -3px; }
+}
+
+@keyframes pep-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.animate-fade-in { animation: pep-fade-in 0.3s ease forwards; }
+@media (prefers-reduced-motion: reduce) { .animate-fade-in { animation: none; } }
