@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Your Free Painting Quote | Professional Edge Painting</title>
+<!-- The original GoHighLevel quote page, kept as-is. Leads still go to the GHL inbound webhook below. -->
+<link rel="icon" type="image/png" href="https://professionaledgepainting.com/photos/web/logo_mark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;500;600;700&family=Ubuntu:wght@500;700&display=swap">
+<style>
+:root {
+  --navy: #1c2b45; --navy-2: #2a3d5e; --ink: #17202e; --muted: #5a6577; --paper: #ffffff; --card: #ffffff;
+  --line: #dbe1ea; --accent: #e3a72b; --accent-hover: #d1951a; --ok: #1f7a4d; --err: #b4322a;
+  --display: "Bricolage Grotesque", "Arial Narrow", Arial, sans-serif;
+  --body: "Public Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { margin: 0; padding-top: 24px; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.08; }
+
+.page { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 28px; display: grid; gap: 10px; justify-items: center; }
+.logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+.page > header { position: relative; top: -24px; }
+.logo-mark { width: 46px; height: auto; flex: none; display: block; }
+.logo-words { display: grid; text-align: left; }
+.logo-name { font-family: "Ubuntu", "Segoe UI", Roboto, Arial, sans-serif; font-weight: 700; font-size: clamp(19px, 3vw, 24px); color: var(--navy); line-height: 1.1; }
+.logo-place { font-family: "Ubuntu", "Segoe UI", Roboto, Arial, sans-serif; font-weight: 500; font-size: clamp(12px, 1.6vw, 14px); color: #5a6577; }
+.panel { width: 100%; background: #33507a; border: 3px solid var(--accent); border-radius: 10px; padding-block: 26px 36px; padding-left: max(14px, 3vw); padding-right: max(14px, 3vw); text-align: center; color: #fff; }
+.panel h1 { font-family: var(--body); font-size: clamp(26px, 3.6vw, 38px); font-weight: 800; letter-spacing: -.01em; }
+.panel-sub { font-weight: 600; font-size: clamp(14px, 1.6vw, 16px); color: #d9e0ec; margin: 6px 0 14px; }
+.panel #pef { max-width: 600px; margin: 0 auto; text-align: left; }
+.foot { display: grid; justify-items: center; gap: 10px; text-align: center; padding-top: 18px; }
+.foot .logo-mark { width: 44px; }
+.foot .logo-name { font-size: 19px; }
+.foot .logo-place { font-size: 13px; }
+.foot a.policy { color: #1f6fd1; font-size: 14px; text-decoration: none; }
+.foot a.policy:hover { text-decoration: underline; }
+.copy { font-size: 13px; font-weight: 700; color: var(--ink); margin: 6px 0 0; }
+
+#pef { --pef-navy: #1c2b45; --pef-ink: #1f2733; --pef-muted: #5f6b7d; --pef-line: #d5dbe4; --pef-accent: #e3a72b; --pef-accent-dark: #c98f17; --pef-err: #b4322a;
+  font-family: "Public Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--pef-ink);
+  background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 6px 20px rgba(10, 20, 40, .18); }
+#pef * { box-sizing: border-box; }
+#pef .pef-bar { height: 4px; background: #eef1f5; }
+#pef .pef-bar i { display: block; height: 100%; width: 0; background: var(--pef-accent); transition: width .35s ease; }
+#pef .pef-body { padding: 26px 36px 22px; min-height: 230px; }
+#pef .pef-step[hidden] { display: none !important; }
+#pef h2, #pef .pef-q { font-family: inherit; font-size: 16px; font-weight: 500; color: var(--pef-ink); margin: 0 0 14px; line-height: 1.4; text-wrap: balance; }
+#pef h2::after, #pef .pef-q::after { content: " *"; }
+#pef .pef-q { margin-top: 18px; }
+#pef .pef-q:first-child { margin-top: 0; }
+#pef .pef-opts { display: grid; gap: 4px; }
+#pef .pef-opt { position: relative; display: flex; align-items: center; gap: 12px; padding: 6px 0; cursor: pointer; font-size: 16px; font-weight: 400; line-height: 1.35; color: var(--pef-ink); }
+#pef .pef-opt input { position: absolute; opacity: 0; pointer-events: none; }
+#pef .pef-opt .pef-tick { flex: none; width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid #8d97a8; display: grid; place-items: center; background: #fff; transition: border-color .15s, background .15s; }
+#pef .pef-opt input[type="radio"] + .pef-tick { border-radius: 50%; }
+#pef .pef-opt .pef-tick svg { width: 11px; height: 11px; opacity: 0; }
+#pef .pef-opt:hover .pef-tick { border-color: var(--pef-navy); }
+#pef .pef-opt input:checked + .pef-tick { background: var(--pef-accent); border-color: var(--pef-accent); }
+#pef .pef-opt input:checked + .pef-tick svg { opacity: 1; }
+#pef .pef-opt input:focus-visible + .pef-tick { outline: 3px solid rgba(227, 167, 43, .5); outline-offset: 2px; }
+#pef .pef-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; }
+#pef .pef-field { display: grid; gap: 5px; min-width: 0; }
+#pef .pef-field.full { grid-column: 1 / -1; }
+#pef label.pef-lab { font-size: 14px; font-weight: 500; color: var(--pef-ink); }
+#pef label.pef-lab em { font-style: normal; color: var(--pef-muted); }
+#pef input[type="text"], #pef input[type="tel"], #pef input[type="email"], #pef textarea {
+  width: 100%; font: inherit; font-size: 16px; color: var(--pef-ink); padding: 9px 11px; border: 1px solid var(--pef-line); border-radius: 6px; background: #fff; }
+#pef textarea { min-height: 70px; resize: vertical; }
+#pef input:focus, #pef textarea:focus { outline: none; border-color: var(--pef-navy); box-shadow: 0 0 0 3px rgba(28, 43, 69, .12); }
+#pef .pef-invalid { border-color: var(--pef-err) !important; }
+#pef .pef-error { color: var(--pef-err); font-size: 14px; font-weight: 500; margin: 14px 0 0; }
+#pef .pef-note { font-size: 14px; border-radius: 6px; padding: 9px 12px; margin-top: 12px; background: #f1f4f8; color: var(--pef-ink); }
+#pef .pef-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: var(--pef-muted); line-height: 1.4; margin-top: 14px; cursor: pointer; }
+#pef .pef-consent input { margin-top: 1px; width: 16px; height: 16px; accent-color: var(--pef-accent-dark); flex: none; }
+#pef .pef-nav { display: flex; justify-content: space-between; align-items: stretch; background: var(--pef-accent); min-height: 52px; }
+#pef .pef-nav[hidden] { display: none !important; }
+#pef .pef-nav button { font: inherit; cursor: pointer; border: 0; text-transform: uppercase; letter-spacing: .04em; font-weight: 800; font-size: 14px; color: var(--pef-navy); padding: 0 26px; }
+#pef .pef-back { background: transparent; margin-right: auto; }
+#pef .pef-back[hidden] { display: none; }
+#pef .pef-next { background: var(--pef-accent-dark); margin-left: auto; }
+#pef .pef-next:hover { background: #b78012; }
+#pef .pef-back:hover { background: rgba(0, 0, 0, .06); }
+#pef .pef-next:disabled { opacity: .6; cursor: wait; }
+#pef .pef-nav button:focus-visible { outline: 3px solid var(--pef-navy); outline-offset: -3px; }
+#pef .pef-done { text-align: center; padding: 6px 0 4px; }
+#pef .pef-done h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+#pef .pef-done h2::after { content: none; }
+#pef .pef-done-icon { width: 52px; height: 52px; border-radius: 50%; background: #fdf3dc; display: grid; place-items: center; margin: 0 auto 12px; }
+#pef .pef-done-icon svg { width: 26px; height: 26px; }
+#pef .pef-done p { color: var(--pef-muted); margin: 6px 0 0; }
+#pef .pef-done .pef-phone { font-weight: 700; color: var(--pef-navy); user-select: all; }
+#pef .pef-demo { margin-top: 14px; font-size: 12px; color: var(--pef-muted); background: #f3f5f8; border-radius: 6px; padding: 8px 10px; text-align: left; white-space: pre-wrap; word-break: break-word; max-height: 160px; overflow: auto; font-family: ui-monospace, Menlo, Consolas, monospace; }
+@media (max-width: 520px) {
+  #pef .pef-body { padding: 20px 18px 18px; }
+  #pef .pef-fields { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { #pef * { transition: none !important; } }
+
+.results { width: 100%; padding-top: 18px; }
+.results-eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: 12px; font-weight: 800; color: #1f5fa8; margin: 0 0 6px; }
+.results h2 { font-family: var(--display); font-weight: 800; font-size: clamp(22px, 3.2vw, 30px); color: var(--navy); line-height: 1.15; text-wrap: balance; margin: 0 0 18px; }
+.ba-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.ba-card { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+.ba { position: relative; aspect-ratio: 4 / 5; max-width: 100%; background: repeating-linear-gradient(135deg, #eef1f6 0 12px, #e4e9f0 12px 24px); overflow: hidden; user-select: none; }
+.ba img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.ba img.ba-missing { visibility: hidden; }
+.ba-before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+.ba::after { content: ""; position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 6px rgba(0, 0, 0, .35); pointer-events: none; }
+.ba-handle { position: absolute; top: 50%; left: var(--pos); width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 2px 8px rgba(0, 0, 0, .3); z-index: 2; pointer-events: none; }
+.ba-handle svg { width: 18px; height: 18px; }
+.ba-tag { position: absolute; top: 10px; z-index: 2; font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #fff; padding: 4px 9px; border-radius: 99px; pointer-events: none; }
+.ba-tag-b { left: 10px; background: rgba(28, 43, 69, .85); }
+.ba-tag-a { right: 10px; background: #1f6fd1; }
+.ba-hint { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 2; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: rgba(28, 43, 69, .85); padding: 5px 10px; border-radius: 99px; white-space: nowrap; pointer-events: none; }
+.ba-range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; z-index: 3; -webkit-appearance: none; appearance: none; touch-action: pan-y; }
+.ba:focus-within { outline: 3px solid rgba(227, 167, 43, .7); outline-offset: -3px; }
+.ba-card figcaption { padding: 11px 13px 13px; font-size: 14px; font-weight: 500; color: var(--ink); }
+@media (max-width: 760px) { .ba-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .ba-grid { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <a class="logo" href="https://professionaledgepainting.com" aria-label="Professional Edge Painting home">
+      <img class="logo-mark" src="https://professionaledgepainting.com/photos/web/logo_mark.png" alt="">
+      <span class="logo-words"><span class="logo-name">Professional Edge Painting</span><span class="logo-place">Brazos Valley, TX</span></span>
+    </a>
+  </header>
+  <main class="panel">
+    <h1>Get Your Free Painting Quote</h1>
+    <p class="panel-sub">A 60-second survey for Brazos Valley homeowners. No commitment required.</p>
+      <div id="pef">
+        <div class="pef-bar"><i id="pef-bar"></i></div>
+        <div class="pef-body" id="pef-form">
+
+          <section class="pef-step" data-step="1" data-name="Your project">
+            <h2>What would you like painted?</h2>
+            <div class="pef-opts">
+              <label class="pef-opt"><input type="checkbox" name="services" value="Interior painting"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Interior painting</label>
+              <label class="pef-opt"><input type="checkbox" name="services" value="Exterior painting"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Exterior painting</label>
+              <label class="pef-opt"><input type="checkbox" name="services" value="Cabinets"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Cabinet painting or refinishing</label>
+              <label class="pef-opt"><input type="checkbox" name="services" value="Fence or concrete staining"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Fence or concrete staining</label>
+              <label class="pef-opt"><input type="checkbox" name="services" value="Drywall repair"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Drywall repair</label>
+              <label class="pef-opt"><input type="checkbox" name="services" value="Something else"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Something else</label>
+            </div>
+          </section>
+
+          <section class="pef-step" data-step="2" data-name="Project size" hidden>
+            <div id="pef-scope"></div>
+          </section>
+
+          <section class="pef-step" data-step="3" data-name="Timing" hidden>
+            <h2>When are you hoping to start?</h2>
+            <div class="pef-opts">
+              <label class="pef-opt"><input type="radio" name="timeline" value="As soon as possible"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>As soon as possible</label>
+              <label class="pef-opt"><input type="radio" name="timeline" value="Within a month"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Within a month</label>
+              <label class="pef-opt"><input type="radio" name="timeline" value="1 to 3 months"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>In 1 to 3 months</label>
+              <label class="pef-opt"><input type="radio" name="timeline" value="Just getting prices"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Just getting prices for now</label>
+            </div>
+          </section>
+
+          <section class="pef-step" data-step="4" data-name="Home" hidden>
+            <h2>Which best describes the home?</h2>
+            <div class="pef-opts">
+              <label class="pef-opt"><input type="radio" name="property" value="I live here"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>I own it and live here</label>
+              <label class="pef-opt"><input type="radio" name="property" value="Getting ready to sell"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Getting it ready to sell</label>
+              <label class="pef-opt"><input type="radio" name="property" value="Rental property"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Rental I own</label>
+              <label class="pef-opt"><input type="radio" name="property" value="New purchase"><span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>Just bought it</label>
+            </div>
+          </section>
+
+          <section class="pef-step" data-step="5" data-name="Location" hidden>
+            <h2>Where is the home?</h2>
+            <div class="pef-fields">
+              <div class="pef-field"><label class="pef-lab" for="pef-zip">ZIP code</label><input type="text" id="pef-zip" name="postal_code" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="77840"></div>
+              <div class="pef-field"><label class="pef-lab" for="pef-city">City <em>(optional)</em></label><input type="text" id="pef-city" name="city" autocomplete="address-level2" placeholder="College Station"></div>
+              <div class="pef-field full"><label class="pef-lab" for="pef-address">Street address <em>(optional)</em></label><input type="text" id="pef-address" name="address1" autocomplete="street-address" placeholder="So Devan can look at the home before calling"></div>
+              <div class="pef-field full"><label class="pef-lab" for="pef-notes">Anything else we should know? <em>(optional)</em></label><textarea id="pef-notes" name="project_notes" placeholder="Colors you have in mind, peeling areas, ceiling height, deadlines..."></textarea></div>
+            </div>
+            <p class="pef-note" id="pef-zipnote" hidden>That ZIP looks outside our usual area. Send it anyway and we'll let you know if we can make it work.</p>
+          </section>
+
+          <section class="pef-step" data-step="6" data-name="Contact" hidden>
+            <h2>Where should we send your free quote?</h2>
+            <div class="pef-fields">
+              <div class="pef-field"><label class="pef-lab" for="pef-first">First name</label><input type="text" id="pef-first" name="first_name" autocomplete="given-name"></div>
+              <div class="pef-field"><label class="pef-lab" for="pef-last">Last name</label><input type="text" id="pef-last" name="last_name" autocomplete="family-name"></div>
+              <div class="pef-field"><label class="pef-lab" for="pef-phone">Mobile phone</label><input type="tel" id="pef-phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="(979) 555-0123"></div>
+              <div class="pef-field"><label class="pef-lab" for="pef-email">Email</label><input type="email" id="pef-email" name="email" autocomplete="email" placeholder="you@example.com"></div>
+            </div>
+            <label class="pef-consent"><input type="checkbox" id="pef-sms" name="sms_consent" value="yes"><span>I agree to receive calls and text messages from Professional Edge Painting about my quote at the number above. Message and data rates may apply. Reply STOP to opt out. Consent is not a condition of purchase.</span></label>
+          </section>
+
+          <section class="pef-step pef-done" data-step="7" data-name="Done" hidden>
+            <div class="pef-done-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#1c2b45" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+            <h2 id="pef-thanks">Thanks, you're all set</h2>
+            <p>Devan will reach out shortly to schedule your walkthrough.</p>
+            <p>Need us sooner? Call or text <span class="pef-phone">979-317-5344</span></p>
+            <pre class="pef-demo" id="pef-demo" hidden></pre>
+          </section>
+
+          <p class="pef-error" id="pef-error" role="alert" hidden></p>
+        </div>
+        <div class="pef-nav" id="pef-nav">
+          <button type="button" class="pef-back" id="pef-back" hidden>&larr; Back</button>
+          <button type="button" class="pef-next" id="pef-next">Next &rarr;</button>
+        </div>
+      </div>
+      <script>
+      (function () {
+        var WEBHOOK_URL = "https://services.leadconnectorhq.com/hooks/tiXIbhmn25GoHJDpH89w/webhook-trigger/b75894bf-3b22-4dc7-b719-17917b36c23d";   // GHL workflow "Inbound Webhook" trigger URL. Empty = preview mode, nothing is sent.
+        var REDIRECT_URL = "";  // Optional: thank-you page URL. Empty = show the thank-you message in place.
+        var SERVICE_ZIPS = /^77[6-8]\d\d$/; // Brazos Valley area ZIPs; anything else gets a soft warning, never a block.
+
+        var SCOPES = {
+          "Interior painting": { q: "Interior: how much of the home?", name: "interior_scope", opts: ["1 to 2 rooms", "3 to 5 rooms", "6+ rooms", "Whole home"] },
+          "Exterior painting": { q: "Exterior: what kind of home?", name: "exterior_scope", opts: ["One-story home", "Two-story home", "Trim, doors or shutters only", "Not sure"] },
+          "Cabinets": { q: "Cabinets: which ones?", name: "cabinet_scope", opts: ["Kitchen", "Kitchen and bathrooms", "Bathroom vanities", "Other built-ins"] },
+          "Fence or concrete staining": { q: "Staining: what needs it?", name: "staining_scope", opts: ["Fence", "Deck or patio", "Driveway or concrete", "More than one"] },
+          "Drywall repair": { q: "Drywall: how much repair?", name: "drywall_scope", opts: ["A few patches or holes", "One room", "Several rooms", "Water damage"] },
+          "Something else": { q: "Something else", name: "other_scope", text: true }
+        };
+        var TICK = '<span class="pef-tick"><svg viewBox="0 0 12 12" fill="none" stroke="#1c2b45" stroke-width="2"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></span>';
+
+        var form = document.getElementById("pef-form");
+        var steps = form.querySelectorAll(".pef-step");
+        var total = 6, cur = 1;
+        var $ = function (id) { return document.getElementById(id); };
+        var err = $("pef-error"), back = $("pef-back"), next = $("pef-next");
+
+        function checked(name) { return Array.prototype.map.call(form.querySelectorAll('input[name="' + name + '"]:checked'), function (i) { return i.value; }); }
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+        function buildScope() {
+          var box = $("pef-scope"), prev = {};
+          box.querySelectorAll("input:checked, textarea").forEach(function (i) { prev[i.name] = i.value; });
+          box.innerHTML = checked("services").map(function (s) {
+            var c = SCOPES[s];
+            if (c.text) return '<p class="pef-q">Tell us what you need painted</p><textarea name="' + c.name + '" id="pef-' + c.name + '" placeholder="For example: front door, garage floor, wallpaper removal">' + esc(prev[c.name] || "") + '</textarea>';
+            return '<p class="pef-q">' + c.q + '</p><div class="pef-opts">' + c.opts.map(function (o) {
+              return '<label class="pef-opt"><input type="radio" name="' + c.name + '" value="' + esc(o) + '"' + (prev[c.name] === o ? " checked" : "") + '>' + TICK + esc(o) + '</label>';
+            }).join("") + '</div>';
+          }).join("");
+        }
+
+        function show(n) {
+          cur = n;
+          steps.forEach(function (s) { s.hidden = +s.dataset.step !== n; });
+          var done = n > total;
+          $("pef-bar").style.width = (done ? 100 : (n - 1) / total * 100) + "%";
+          back.hidden = n === 1 || done;
+          $("pef-nav").hidden = done;
+          next.innerHTML = n === total ? "Get my quote &rarr;" : "Next &rarr;";
+          hideErr();
+          var top = $("pef").getBoundingClientRect().top;
+          if (top < 0) $("pef").scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        function fail(msg, el) { err.textContent = msg; err.hidden = false; if (el) { el.classList.add("pef-invalid"); el.focus(); } }
+        function hideErr() { err.hidden = true; form.querySelectorAll(".pef-invalid").forEach(function (e) { e.classList.remove("pef-invalid"); }); }
+
+        function valid(n) {
+          if (n === 1 && !checked("services").length) return fail("Pick at least one service to continue.");
+          if (n === 2) {
+            var missing = checked("services").filter(function (s) { var c = SCOPES[s]; return c.text ? !form.querySelector('[name="' + c.name + '"]').value.trim() : !checked(c.name).length; });
+            if (missing.length) return fail("Answer the question for " + missing.join(" and ").toLowerCase() + ".");
+          }
+          if (n === 3 && !checked("timeline").length) return fail("Choose when you'd like to start.");
+          if (n === 4 && !checked("property").length) return fail("Choose the option that best describes the home.");
+          if (n === 5 && !/^\d{5}$/.test($("pef-zip").value.trim())) return fail("Enter the 5-digit ZIP code for the home.", $("pef-zip"));
+          if (n === 6) {
+            if (!$("pef-first").value.trim()) return fail("Enter your first name.", $("pef-first"));
+            if ($("pef-phone").value.replace(/\D/g, "").replace(/^1/, "").length !== 10) return fail("Enter a 10-digit phone number so Devan can reach you.", $("pef-phone"));
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("pef-email").value.trim())) return fail("Enter an email address like name@example.com.", $("pef-email"));
+          }
+          return true;
+        }
+
+        function payload() {
+          var p = new URLSearchParams(location.search), d = {
+            first_name: $("pef-first").value.trim(), last_name: $("pef-last").value.trim(),
+            phone: "+1" + $("pef-phone").value.replace(/\D/g, "").replace(/^1/, ""), email: $("pef-email").value.trim(),
+            postal_code: $("pef-zip").value.trim(), city: $("pef-city").value.trim(), address1: $("pef-address").value.trim(),
+            services: checked("services").join(", "), timeline: checked("timeline")[0] || "", property_type: checked("property")[0] || "",
+            project_notes: $("pef-notes").value.trim(), sms_consent: $("pef-sms").checked ? "yes" : "no",
+            in_service_area: SERVICE_ZIPS.test($("pef-zip").value.trim()) ? "yes" : "no",
+            lead_source: "Website quote funnel", page_url: location.href, submitted_at: new Date().toISOString()
+          };
+          Object.keys(SCOPES).forEach(function (s) { var c = SCOPES[s], el = form.querySelector('[name="' + c.name + '"]'); d[c.name] = el ? (c.text ? el.value.trim() : (checked(c.name)[0] || "")) : ""; });
+          ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "fbclid"].forEach(function (k) { d[k] = p.get(k) || ""; });
+          return d;
+        }
+
+        function finish(d) {
+          $("pef-thanks").textContent = "Thanks, " + d.first_name + ". You're all set";
+          if (REDIRECT_URL) { location.href = REDIRECT_URL; return; }
+          if (!WEBHOOK_URL) { var demo = $("pef-demo"); demo.textContent = "Preview mode: nothing was sent. This is what GoHighLevel would receive:\n" + JSON.stringify(d, null, 2); demo.hidden = false; }
+          show(7);
+        }
+
+        function send(d) {
+          if (!WEBHOOK_URL) return Promise.resolve();
+          // Sent as a plain form post so the browser never blocks it (no CORS preflight); GHL reads form fields.
+          var body = new URLSearchParams();
+          Object.keys(d).forEach(function (k) { body.append(k, d[k]); });
+          return fetch(WEBHOOK_URL, { method: "POST", mode: "no-cors", keepalive: true, body: body });
+        }
+
+        $("pef-phone").addEventListener("input", function (e) {
+          var v = e.target.value.replace(/\D/g, "").replace(/^1/, "").slice(0, 10);
+          e.target.value = v.length > 6 ? "(" + v.slice(0, 3) + ") " + v.slice(3, 6) + "-" + v.slice(6) : v.length > 3 ? "(" + v.slice(0, 3) + ") " + v.slice(3) : v;
+        });
+        $("pef-zip").addEventListener("input", function (e) {
+          e.target.value = e.target.value.replace(/\D/g, "").slice(0, 5);
+          $("pef-zipnote").hidden = e.target.value.length < 5 || SERVICE_ZIPS.test(e.target.value);
+        });
+        form.addEventListener("input", hideErr);
+        back.addEventListener("click", function () { show(cur - 1); });
+        function go() {
+          if (!valid(cur)) return;
+          if (cur === 1) buildScope();
+          if (cur < total) return show(cur + 1);
+          var d = payload();
+          next.disabled = true; next.textContent = "Sending...";
+          send(d).then(function () { finish(d); }, function () {
+            next.disabled = false; next.innerHTML = "Get my quote &rarr;";
+            fail("We couldn't send that. Check your connection and try again, or call 979-317-5344.");
+          });
+        }
+        next.addEventListener("click", go);
+        form.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && e.target.tagName === "INPUT") { e.preventDefault(); go(); }
+        });
+        show(1);
+      })();
+      </script>
+  </main>
+  <section class="results" aria-labelledby="results-title">
+    <p class="results-eyebrow">Real results</p>
+    <h2 id="results-title">Before &amp; After: Real Painting Projects in the Brazos Valley</h2>
+    <div class="ba-grid" id="ba-grid"></div>
+  </section>
+  <script>
+  (function () {
+    // Same six before/after pairs as the original page.
+    var base = "https://professionaledgepainting.com/photos/web/";
+    var pairs = [
+      ["After_IMG_1873", "Before_IMG_1872", "Full exterior repaint, color change"],
+      ["After_IMG_3281", "Before_IMG_3280", "Full paint exterior, remodel"],
+      ["After_IMG_3276", "Before_IMG_3275", "Backyard pergola refinished"],
+      ["After_IMG_3266", "Before_IMG_3267", "Refinished double entry doors, stain and clear"],
+      ["After_IMG_3270", "Before_IMG_3269", "Front door finished in red"],
+      ["After_IMG_3273", "Before_IMG_3271", "Weathered garage door refinished"]
+    ];
+    document.getElementById("ba-grid").innerHTML = pairs.map(function (p) {
+      return '<figure class="ba-card"><div class="ba" style="--pos:50%">' +
+        '<img src="' + base + p[0] + '.jpg" alt="After: ' + p[2] + '" loading="lazy" onerror="this.classList.add(\'ba-missing\')">' +
+        '<img class="ba-before" src="' + base + p[1] + '.jpg" alt="Before: ' + p[2] + '" loading="lazy" onerror="this.classList.add(\'ba-missing\')">' +
+        '<span class="ba-tag ba-tag-b">Before</span><span class="ba-tag ba-tag-a">After</span>' +
+        '<span class="ba-handle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#1c2b45" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg></span>' +
+        '<span class="ba-hint">Drag to compare</span>' +
+        '<input class="ba-range" type="range" min="0" max="100" value="50" aria-label="Compare before and after: ' + p[2] + '">' +
+        '</div><figcaption>' + p[2] + '</figcaption></figure>';
+    }).join("");
+    document.querySelectorAll(".ba-range").forEach(function (r) {
+      r.addEventListener("input", function () { r.parentNode.style.setProperty("--pos", r.value + "%"); });
+    });
+  })();
+  </script>
+  <footer class="foot">
+    <a class="logo" href="https://professionaledgepainting.com" aria-label="Professional Edge Painting home">
+      <img class="logo-mark" src="https://professionaledgepainting.com/photos/web/logo_mark.png" alt="">
+      <span class="logo-words"><span class="logo-name">Professional Edge Painting</span><span class="logo-place">Brazos Valley, TX</span></span>
+    </a>
+    <a class="policy" href="https://professionaledgepainting.com/privacy-page/" target="_blank" rel="noopener">Privacy policy</a>
+    <p class="copy">Copyright <span id="yr">2026</span> Professional Edge Painting LLC. All Rights Reserved.</p>
+  </footer>
+</div>
+<script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+</body>
+</html>
