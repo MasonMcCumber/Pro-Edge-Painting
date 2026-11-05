@@ -236,7 +236,7 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
               else setTouched((t) => ({ ...t, email: true }));
             }}
           >
-            <h2 className="text-lg md:text-xl font-bold text-pep-navy text-center">Last step: where should we email your quote?</h2>
+            <h2 className="text-lg md:text-xl font-bold text-pep-navy text-center">Last step: what is your best email?</h2>
             <label className="block text-sm font-semibold mt-5 mb-1.5" htmlFor="email">Email</label>
             <input
               id="email"
