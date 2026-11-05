@@ -131,8 +131,7 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
               else setTouched({ full_name: true, phone: true, postal_code: true });
             }}
           >
-            <h2 className="text-lg md:text-xl font-bold text-pep-navy text-center">Where should we send your savings?</h2>
-            <div className="mt-4 space-y-3">
+            <div className="space-y-3">
               {CONTACT_FIELDS.map((f) => {
                 const bad = touched[f.key] && !VALID[f.key](contact[f.key]);
                 return (
