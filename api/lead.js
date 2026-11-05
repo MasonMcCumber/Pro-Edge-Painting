@@ -8,22 +8,24 @@
 const GHL_API = 'https://services.leadconnectorhq.com';
 const GHL_VERSION = '2021-07-28';
 
-// Quiz answers -> PEP contact custom fields (Settings → Custom Fields).
-// ponytail: fieldId '' = not created yet; the answer still lands in the completion note.
+// Quiz answers -> PEP's existing contact custom fields (Settings → Custom Fields), shared with the original quote page.
 export const QUESTIONS = {
   service_needed: {
     label: 'Service needed',
-    fieldId: '',
+    fieldId: 'ou2rHBHJbnvNZbuWlbgS', // Services Requested
     answers: ['Interior painting', 'Exterior painting', 'Cabinets', 'Fence or staining', 'Something else'],
   },
   start_timeline: {
     label: 'Start timeline',
-    fieldId: '',
+    fieldId: 'Ttoj64CF0CalMptCHe7D', // Start Timeline
     answers: ['As soon as possible', 'Within a month', 'In 1 to 3 months', 'Just getting prices'],
   },
-  homeowner: { label: 'Homeowner', fieldId: '', answers: ['Yes', 'No'] },
+  homeowner: { label: 'Homeowner', fieldId: 'ReDStk2oFDyVToo9C8K9', answers: ['Yes', 'No'] }, // Property type
 };
-export const OFFER_FIELD_ID = ''; // "Lead Offer" custom field, optional
+export const OFFER_FIELD_ID = ''; // no "Lead Offer" field; the offer goes in the offer-<slug> tag and the note
+
+// The homeowner answer is stored in PEP's "Property type" field, so give it a readable value there.
+export const propertyType = (homeowner) => ({ Yes: 'Homeowner', No: 'Not the homeowner' })[homeowner] || '';
 
 const TRACKING_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_placement', 'fbclid'];
 
@@ -81,7 +83,7 @@ export function buildContact(body, locationId) {
   for (const [key, q] of Object.entries(QUESTIONS)) {
     if (!q.answers.includes(raw[key])) continue; // unknown answers are dropped
     answers[key] = raw[key];
-    if (q.fieldId) customFields.push({ id: q.fieldId, field_value: raw[key] });
+    if (q.fieldId) customFields.push({ id: q.fieldId, field_value: key === 'homeowner' ? propertyType(raw[key]) : raw[key] });
   }
   if (OFFER_FIELD_ID) customFields.push({ id: OFFER_FIELD_ID, field_value: offer });
   if (customFields.length) contact.customFields = customFields;
@@ -122,7 +124,7 @@ export function webhookBody(contact, answers, offer, tracking, pageUrl) {
     postal_code: contact.postalCode || '',
     services: answers.service_needed || '',
     timeline: answers.start_timeline || '',
-    homeowner: answers.homeowner || '',
+    property_type: propertyType(answers.homeowner),
     sms_consent: 'yes', // the contact step shows call/text consent wording
     lead_source: 'Website quote funnel',
     lead_offer: offer,

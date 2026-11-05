@@ -27,6 +27,11 @@ assert.equal(contact.lastName, 'Q Doe');
 assert.equal(contact.postalCode, '77840');
 assert.equal(contact.email, 'jane@home.com');
 assert.equal(offer, 'qualify');
+// Answers map to PEP's existing custom fields; homeowner goes into Property type.
+assert.deepEqual(contact.customFields, [
+  { id: 'ou2rHBHJbnvNZbuWlbgS', field_value: 'Exterior painting' },
+  { id: 'ReDStk2oFDyVToo9C8K9', field_value: 'Homeowner' },
+]);
 // Unknown answers and tracking keys are dropped.
 assert.deepEqual(answers, { service_needed: 'Exterior painting', homeowner: 'Yes' });
 assert.deepEqual(tracking, { utm_source: 'fb' });
@@ -51,6 +56,7 @@ assert.equal(hook.get('services'), 'Exterior painting');
 assert.equal(hook.get('timeline'), '');
 assert.equal(hook.get('lead_source'), 'Website quote funnel');
 assert.equal(hook.get('lead_offer'), 'qualify');
+assert.equal(hook.get('property_type'), 'Homeowner');
 assert.equal(hook.get('utm_source'), 'fb');
 
 console.log('lead tests passed');
