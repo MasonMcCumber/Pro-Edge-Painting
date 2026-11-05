@@ -256,7 +256,7 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
             <button type="submit" tabIndex={-1} aria-hidden className="absolute -left-[10000px] h-px w-px overflow-hidden" />
             <div className="flex items-center justify-between">
               {backBtn}
-              <button type="button" onClick={() => finish('')} className="mt-5 text-sm font-semibold text-pep-muted underline hover:text-pep-navy">
+              <button type="button" onClick={() => finish(validEmail(email) ? email.trim() : '')} className="mt-5 text-sm font-semibold text-pep-muted underline hover:text-pep-navy">
                 Skip
               </button>
             </div>
