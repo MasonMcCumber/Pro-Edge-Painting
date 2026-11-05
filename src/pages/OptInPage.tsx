@@ -17,13 +17,13 @@ const RESULTS = [
 
 function Logo({ small }: { small?: boolean }) {
   return (
-    <a href={SITE} className="flex items-center gap-3" aria-label="Professional Edge Painting home">
+    <div className="flex items-center gap-3">
       <img src={LOGO} alt="" className={small ? 'w-10' : 'w-11'} />
       <span className="grid text-left font-logo leading-tight">
         <span className={`font-bold text-pep-navy ${small ? 'text-lg' : 'text-xl md:text-2xl'}`}>Professional Edge Painting</span>
         <span className="text-sm font-medium text-pep-muted">Brazos Valley, TX</span>
       </span>
-    </a>
+    </div>
   );
 }
 
