@@ -59,6 +59,7 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
   const honeypot = useRef<HTMLInputElement>(null);
   const savedContact = useRef(''); // contact as last saved, so Back doesn't bounce them forward again
   const tracking = useRef(readTracking());
+  const finishing = useRef(false);
 
   const allValid = CONTACT_FIELDS.every((f) => VALID[f.key](contact[f.key]));
   const contactKey = JSON.stringify(contact);
@@ -74,13 +75,14 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
     if (changed) {
       if (!savedContact.current) track('Lead');
       savedContact.current = contactKey;
-      save('lead', answers).catch(() => {}); // every later step resends everything, so a missed save recovers
+      save('lead', {}).catch(() => {}); // capture 1: contact only. Capture 2 (answers) happens at the end.
     }
     setStep(1);
   }
 
   async function finish(mail: string) {
-    if (step !== EMAIL_STEP) return;
+    if (step !== EMAIL_STEP || finishing.current) return;
+    finishing.current = true; // double tap / Enter + timer can't send it twice
     setStep(DONE_STEP);
     await save('complete', answers, mail).catch(() => {}); // never dead-end on a failed save
     track('CompleteRegistration');
@@ -110,8 +112,7 @@ const InstantForm = forwardRef<HTMLDivElement, { offer: string }>(function Insta
 
   function answer(q: Question, option: string) {
     const next = { ...answers, [q.key]: option };
-    setAnswers(next);
-    save('lead', next).catch(() => {});
+    setAnswers(next); // saved once, at the end
     setStep((s) => s + 1);
   }
 

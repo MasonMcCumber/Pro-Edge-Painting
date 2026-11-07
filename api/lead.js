@@ -1,5 +1,5 @@
 // Vercel serverless function: instant lead capture into Professional Edge Painting's GoHighLevel.
-// The page calls this as soon as name/phone/ZIP are in, then after every answer, so partial leads are kept.
+// Called twice: once name/phone/ZIP are in (stage lead, contact only) and once every question is answered (stage complete).
 // Contacts are matched by phone, so each call updates the same contact. Nobody is disqualified.
 // Finished leads go to the GHL inbound webhook (no setup needed). Optional Vercel env vars for partial leads + tags:
 //   GHL_PRIVATE_TOKEN  - GHL Private Integration token (Contacts read/write) for the PEP sub-account
@@ -78,7 +78,10 @@ export function buildContact(body, locationId) {
     if (rest.length) contact.lastName = rest.join(' ');
   }
 
-  const raw = body.answers && typeof body.answers === 'object' ? body.answers : {};
+  // Two captures only. 'lead' = contact info: answers are ignored and the answer fields are blanked, so a
+  // repeat visitor never shows last time's answers. 'complete' = the answers they just gave.
+  const completed = body.stage === 'complete';
+  const raw = completed && body.answers && typeof body.answers === 'object' ? body.answers : {};
   const answers = {};
   const customFields = [];
   for (const [key, q] of Object.entries(QUESTIONS)) {
@@ -86,8 +89,7 @@ export function buildContact(body, locationId) {
     const value = q.multi
       ? clean(raw[key], 300).split(/\s*,\s*/).filter((v) => q.answers.includes(v)).join(', ')
       : q.answers.includes(raw[key]) ? raw[key] : '';
-    if (!value) continue;
-    answers[key] = value;
+    if (value) answers[key] = value;
     if (q.fieldId) customFields.push({ id: q.fieldId, field_value: key === 'homeowner' ? propertyType(value) : value });
   }
   if (OFFER_FIELD_ID) customFields.push({ id: OFFER_FIELD_ID, field_value: offer });
@@ -210,6 +212,16 @@ async function saveWithApi(token, contact, answers, offer, tracking, completed) 
     body: JSON.stringify({ tags: tagsFor(offer, completed) }),
   });
   if (!tagRes.ok) console.error('GHL tags failed', tagRes.status, await tagRes.text());
+
+  // New run: drop last run's "finished" tag so workflows only see it once this run finishes.
+  if (!completed) {
+    const untag = await fetch(`${GHL_API}/contacts/${contactId}/tags`, {
+      method: 'DELETE',
+      headers,
+      body: JSON.stringify({ tags: ['funnel-completed'] }),
+    });
+    if (!untag.ok) console.error('GHL untag failed', untag.status, await untag.text());
+  }
 
   if (completed) {
     const noteRes = await fetch(`${GHL_API}/contacts/${contactId}/notes`, {
