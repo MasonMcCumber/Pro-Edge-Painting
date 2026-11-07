@@ -18,6 +18,7 @@ const { contact, answers, offer, tracking } = buildContact(
     offer: 'Qualify',
     answers: { service_needed: 'Exterior painting', start_timeline: 'hacked', homeowner: 'Yes' },
     tracking: { utm_source: 'fb', evil: 'x' },
+    stage: 'complete',
   },
   'LOC',
 );
@@ -30,15 +31,19 @@ assert.equal(offer, 'qualify');
 // Answers map to PEP's existing custom fields; homeowner goes into Property type.
 assert.deepEqual(contact.customFields, [
   { id: 'ou2rHBHJbnvNZbuWlbgS', field_value: 'Exterior painting' },
+  { id: 'Ttoj64CF0CalMptCHe7D', field_value: '' },
   { id: 'ReDStk2oFDyVToo9C8K9', field_value: 'Homeowner' },
 ]);
 // Unknown answers and tracking keys are dropped.
 assert.deepEqual(answers, { service_needed: 'Exterior painting', homeowner: 'Yes' });
 assert.deepEqual(tracking, { utm_source: 'fb' });
 
-// Contact-only step: no blank email/answers keys that would wipe existing data.
-const partial = buildContact({ phone: '9795550123', postal_code: '7784' }, 'LOC').contact;
-assert.deepEqual(Object.keys(partial).sort(), ['locationId', 'phone', 'source']);
+// Contact-only step: answers sent with it are ignored and every answer field is blanked (no stale answers
+// from a past run); no blank email key that would wipe the contact's email.
+const first = buildContact({ phone: '9795550123', postal_code: '7784', stage: 'lead', answers: { homeowner: 'Yes' } }, 'LOC');
+assert.deepEqual(first.answers, {});
+assert.ok(first.contact.customFields.length === 3 && first.contact.customFields.every((f) => f.field_value === ''));
+assert.deepEqual(Object.keys(first.contact).sort(), ['customFields', 'locationId', 'phone', 'source']);
 
 // Offer slugs from the URL can't inject odd tags.
 assert.equal(cleanOffer('10-off'), '10-off');
